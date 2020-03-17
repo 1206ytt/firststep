@@ -2,7 +2,7 @@
 # Author                : pekki black(me)
 # Created               : 2018
 # Last Modified         :
-# Version               : 1.0(maybe)
+# Version               :  1.1(in fact, same as the fir.)
 # Modification          : 
 
 # Description           : Get mp3 from wangyi but in need of other files to construct GUI
