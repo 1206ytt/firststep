@@ -200,3 +200,100 @@ def cover():
 #gametext1=gamefont1.render("欢迎使用",True,(255,150,0))
 #screen.blit(gametext1,(100,100))
 #pygame.display.update()
+
+
+
+#歌曲播放
+def broadcast(song_name):
+    global b,cover1
+    isExists=os.path.exists('D:/Music_temp/')
+    if not isExists:
+        os.makedirs('D:/Music_temp/')
+    urlmusic="http://music.163.com/song/media/outer/url?id="+str(songs_iddic[song_name])+".mp3"
+    downloads=open("D:/Music_temp/"+str(song_name)+".mp3","wb")
+    opener=ur.build_opener()
+    opener.addheaders=[headers]
+    cover1=PIL.ImageTk.PhotoImage(getalbumpic())
+    albumpic['image']=cover1
+    downloads.write(opener.open(urlmusic).read())
+    downloads.close()
+    pygame.mixer.init()
+    pygame.time.delay(1000)
+    pygame.mixer.music.load("D:/Music_temp/"+str(song_name)+".mp3")
+    pygame.mixer.music.play(loops=-1)
+    b=1
+    #time.sleep()
+    
+#播放停止
+def broadcast_shut():
+    global point,b
+    pygame.mixer.music.stop()
+    b=0
+    pygame.mixer.quit()
+    #pygame.quit()
+    #time.sleep()
+    
+    #os.remove("D:/Music_temp/"+str(point)+".mp3")
+#broadcast(input())
+
+#while True:
+    #for event in pygame.event.get():
+        #if event.type == QUIT:
+            #pygame.quit()
+            #sys.exit()
+#窗口外观            
+top1=Tk()
+
+top1.iconbitmap(r'favicon.bmp')
+top1.title('网易云音乐播放')
+top1.geometry('300x500')
+top1.columnconfigure(0,weight=1)
+top1.rowconfigure(0,weight=1)
+
+#设置暂停
+def puase():
+    global b,point
+    if b==0:
+        broadcast(point)
+        b=1
+    elif b==1:
+        pygame.mixer.music.pause()
+        b=2
+    else:
+        pygame.mixer.music.unpause()
+        b=1
+        
+    
+pausepic=PhotoImage(file='暂停状态图标.png')
+pausebutton=Button(top1,bg='RoyalBlue',command=puase)
+pausebutton['image']=pausepic
+pausebutton.place(x=0,y=400)
+#搜索框
+frame1=Frame(top1,bg='red',height=40,width=300)
+frame1.place(x=0,y=0)
+
+var1=StringVar()
+playlistid_label=Label(frame1,bg='red',text='请键入歌单id:',height=1,width=10)
+playlistid_entry=Entry(frame1,textvariable=var1)
+playlistid_label.place(x=0,y=10)
+playlistid_entry.place(x=80,y=10)
+
+search=Button(top1,text='搜索',bg='yellow',command=collect)
+search.place(x=250,y=6)
+
+#唱片图片
+cover1=PhotoImage(file='blank.gif')
+albumpic=Label(top1,bg='Ivory',image=cover1,height=75,width=75)
+albumpic.place(x=0,y=43)
+popular=Label(top1,bg='Ivory',height=4,width=30)
+popular.place(x=90,y=45)
+#中间列表
+
+frame2=Frame(top1,bg='Ivory',height=300,width=280)
+frame2.place(x=0,y=150)
+frame2.columnconfigure(0,weight=1)
+frame2.rowconfigure(0,weight=1)
+
+canvas=Canvas(frame2,height=180,width=280,scrollregion=(0,0,1000,50000))
+cv_frame1=Frame(canvas)
+cv_frame2=canvas.create_window(0,0,window=cv_frame1,anchor='nw',width=1500,height=15000)
