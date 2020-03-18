@@ -2,7 +2,7 @@
 # Author                : pekki black(me)
 # Created               : 2018
 # Last Modified         :
-# Version               :  1.1
+# Version               :  1.2
 # Modification          : 
 # Description           : Get mp3 from wangyi but in need of other files to construct GUI
 
@@ -113,3 +113,90 @@ def collect():
         treeview.insert('',i,values=(str(i+1),x,songs_artists[x],songs_album[x],
                                      songs_duration[x],songs_pops[x]))
         treeview.update()
+
+
+
+
+
+#下载音乐到本地(应补充自定义文件夹）
+def download():
+
+    global point,file,enter3,save
+    
+    save=str(point)
+    
+    top2=Toplevel()
+    top2.title('下载')
+    top2.geometry('400x150')
+    label2=Label(top2,text='请输入保存路径:')
+    label3=Label(top2,text='请输入名称（默认为歌曲名）:')
+    label4=Label(top2,text='.mp3')
+    entry2=Entry(top2,width=32)
+    entry3=Entry(top2,)
+    label2.place(x=10,y=30)
+    entry2.place(x=120,y=30)
+    label3.place(x=10,y=60)
+    entry3.place(x=200,y=60)
+    label4.place(x=350,y=60)#仅支持mp3
+
+
+#下载的弹窗部分，点确认下载
+    def ok():
+        global save,enter3,file
+        file=entry2.get()
+        enter3=entry3.get()
+        
+        if enter3!='':
+            save=enter3
+        print(file)
+        print(save)
+        isExists=os.path.exists(str(file))
+        if not isExists:
+            os.makedirs(str(file))
+        opener=ur.build_opener()
+        opener.addheaders=[headers]
+        urlmusic="http://music.163.com/song/media/outer/url?id="+str(songs_iddic[point])+".mp3"
+        download=open(str(file)+'/'+str(save)+".mp3","wb")
+        download.write(opener.open(urlmusic).read())
+        download.close()
+        top2.destroy()
+#download(input())
+
+
+    button2=Button(top2,text='确认',command=ok)
+    button3=Button(top2,text='取消',command=top2.destroy)
+    button2.place(x=100,y=100)
+    button3.place(x=250,y=100)
+
+
+
+#加载专辑封面图片
+def getalbumpic():
+    global point
+    urlmusic="http://music.163.com/song/media/outer/url?id="+str(point)+".mp3"
+    urlpic=songs_albumpic[point]
+    response = rep.get(urlpic)
+    image = PIL.Image.open(BytesIO(response.content))
+    image1=image.resize((75,75))
+    return image
+
+def cover():
+    urlpic=list_coverimage
+    response = rep.get(urlpic)
+    image = PIL.Image.open(BytesIO(response.content))
+    image1=image.resize((75,75))
+    return image1
+    
+#我曾经想用pygame把他完成
+#pygame.init()
+#pygame.mixer.init()
+#screen=pygame.display.set_mode([1000,700])
+#screen.fill((255,255,240))
+#ico=pygame.image.load(r'C:\Users\赵旭\Desktop\新建文件夹\favicon.bmp').convert_alpha()
+#pygame.display.set_icon(ico)
+#pygame.display.set_caption('网易云音乐播放')
+#pygame.time.delay(1000)
+#gamefont1=pygame.font.SysFont('SimHei',24)
+#gametext1=gamefont1.render("欢迎使用",True,(255,150,0))
+#screen.blit(gametext1,(100,100))
+#pygame.display.update()
