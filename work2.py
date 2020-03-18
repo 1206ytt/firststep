@@ -2,9 +2,9 @@
 # Author                : pekki black(me)
 # Created               : 2018
 # Last Modified         :
-# Version               :  1.1(in fact, same as the fir.)
+# Version               :  1.4(in fact, same as the fir.)
 # Modification          : 
-
+#这次仍然没有什么实质上的变化,但是你不能不让我提交
 # Description           : Get mp3 from wangyi but in need of other files to construct GUI
 
 # -*- coding: utf-8 -*-
