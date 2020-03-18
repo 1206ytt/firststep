@@ -2,7 +2,7 @@
 # Author                : pekki black(me)
 # Created               : 2018
 # Last Modified         :
-# Version               :  1.0
+# Version               :  1.1
 # Modification          : 
 # Description           : Get mp3 from wangyi but in need of other files to construct GUI
 
@@ -55,3 +55,61 @@ def collect():
 #转码
     page = json.loads(data)
     #print(page)
+
+#收集歌曲信息id，歌手，唱片，时长,热度
+
+    global songs_iddic,songs_artists,songs_duration,songs_album,songs_albumpic
+    global songs_pops,list_playCount,list_coverimage,song_artists,songlist1
+    songs_iddic={}
+    songs_artists={}
+    songs_duration={}
+    songs_album={}
+    songs_albumpic={}
+    songs_pops={}
+    list_playCount=page.get('result').get('playCount')#歌单播放量
+    list_coverimage=page.get('result').get('coverImgUrl')#歌单封面
+    list_name=page.get('result').get('name')#歌单名
+    list_des=page.get('result').get('description')#歌单描述
+    song_artists=[[]*i for i in range(len(page.get('result').get("tracks")))]
+
+    songlist1=[]
+
+    for i in range(len(page.get('result').get("tracks"))):
+    
+        song_name=page.get('result').get("tracks")[i].get("name")
+        song_id=page.get('result').get("tracks")[i].get("id")
+        song_album=page.get('result').get("tracks")[i].get("album").get("name")
+        song_albumpic=page.get('result').get("tracks")[i].get("album").get("blurPicUrl")
+        song_duration=page.get('result').get("tracks")[i].get("duration")/1000
+        song_long='%.2f'%(song_duration/60)+'min'#+'%.2f'%(song_duration%60)+'sec'
+        song_pops=page.get('result').get("tracks")[i].get("score")
+
+    
+        for j in range(len(page.get('result').get("tracks")[i].get("artists"))):
+            song_artists_temp=page.get('result').get("tracks")[i].get("artists")[j].get("name")
+            song_artists[i].append(song_artists_temp)
+        
+        temp=song_artists[i]
+        songlist1.append(song_name)
+        songs_artists[song_name]=temp
+        songs_iddic[song_name]=song_id
+        songs_duration[song_name]=song_long
+        songs_album[song_name]=song_album
+        songs_albumpic[song_name]=song_albumpic
+        songs_pops[song_name]=song_pops
+    #print(songs_iddic,song_artists,songs_duration)
+    #print(songs_album)
+    #print(list_playCount)
+    #print(songs_pops)
+
+    global cover1,text1
+    text1='歌单名:'+str(list_name)+'\n'+'歌单播放量'+str(list_playCount)
+    popular['text']=text1
+    cover1=PIL.ImageTk.PhotoImage(cover())
+    albumpic['image']=cover1
+
+    for i in range(len(songlist1)):
+        x=songlist1[i]
+        treeview.insert('',i,values=(str(i+1),x,songs_artists[x],songs_album[x],
+                                     songs_duration[x],songs_pops[x]))
+        treeview.update()
