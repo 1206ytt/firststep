@@ -2,7 +2,7 @@
 # Author                : pekki black(me)
 # Created               : 2018
 # Last Modified         :
-# Version               :  1.2
+# Version               :  1.4
 # Modification          : 
 # Description           : Get mp3 from wangyi but in need of other files to construct GUI
 
@@ -297,3 +297,50 @@ frame2.rowconfigure(0,weight=1)
 canvas=Canvas(frame2,height=180,width=280,scrollregion=(0,0,1000,50000))
 cv_frame1=Frame(canvas)
 cv_frame2=canvas.create_window(0,0,window=cv_frame1,anchor='nw',width=1500,height=15000)
+
+columns=('序号','歌曲名','歌手','专辑名','时长','热度')
+treeview = ttk.Treeview(cv_frame1,height=180,show='headings',columns=columns)
+#treeview浏览歌曲
+treeview.column('序号',width=40)
+treeview.heading('序号',text='序号')
+for i in range(1,6):
+    treeview.column(columns[i])
+    treeview.heading(columns[i],text=columns[i])
+
+
+
+#放置滚动条
+xbar=Scrollbar(frame2,orient=HORIZONTAL)
+xbar.config(command=canvas.xview)
+canvas.configure(xscrollcommand=xbar.set)
+ybar=Scrollbar(frame2,orient=VERTICAL)
+ybar.config(command=canvas.yview)
+canvas.configure(yscrollcommand=ybar.set)
+
+treeview.place(x=0,y=0)
+xbar.pack(side=BOTTOM,fill=X)
+ybar.pack(side=RIGHT,fill=Y)
+canvas.pack(side=LEFT)
+
+#点击选中
+def treeviewClick(event):
+    global point
+    for item in treeview.selection():
+        song_name=treeview.item(item,'values')
+        point=song_name[1]
+#下载功能的图标按钮
+downloadpic=PhotoImage(file='下载.png')
+downloadbutton=Button(top1,image=downloadpic,command=download)
+downloadbutton.place(x=100,y=400)
+
+stopbutton=Button(top1,text='停止播放',command=broadcast_shut)
+stopbutton.place(x=200,y=400)
+
+def clean():    
+    shutil.rmtree("D:/Music_temp")
+cleanbutton=Button(top1,text='清除缓存',command=clean)
+cleanbutton.place(x=200,y=450)
+
+treeview.bind('<ButtonRelease-1>',treeviewClick)
+
+top1.mainloop()
